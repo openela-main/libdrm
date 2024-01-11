@@ -53,8 +53,8 @@ end}
 
 Name:           libdrm
 Summary:        Direct Rendering Manager runtime library
-Version:        2.4.114
-Release:        1%{?dist}
+Version:        2.4.115
+Release:        2%{?dist}
 License:        MIT
 
 URL:            https://dri.freedesktop.org
@@ -278,6 +278,12 @@ install -Dpm0644 -t %{buildroot}%{_udevrulesdir} %{S:2}
 %endif
 
 %changelog
+* Sat May 20 2023 Dave Airlie <airlied@redhat.com> - 2.4.115-2
+- Update to 2.4.115 (retry)
+
+* Thu May 18 2023 Dave Airlie <airlied@redhat.com> - 2.4.115-1
+- Update to 2.4.115
+
 * Thu Nov 10 2022 Dave Airlie <airlied@redhat.com> - 2.4.114-1
 - Update to 2.4.114
 
