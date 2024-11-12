@@ -53,7 +53,7 @@ end}
 
 Name:           libdrm
 Summary:        Direct Rendering Manager runtime library
-Version:        2.4.117
+Version:        2.4.121
 Release:        1%{?dist}
 License:        MIT
 
@@ -279,6 +279,13 @@ cp %{SOURCE1} %{buildroot}%{_docdir}/libdrm
 %endif
 
 %changelog
+* Wed Jun 05 2024 José Expósito <jexposit@redhat.com> - 2.4.121-1
+- Update to 2.4.121
+
+* Mon May 27 2024 José Expósito <jexposit@redhat.com> - 2.4.120-1
+- Update to 2.4.120
+- Fix findings from static application security testing (SAST)
+
 * Mon Nov 06 2023 José Expósito <jexposit@redhat.com> - 2.4.117-1
 - Update to 2.4.117
 
