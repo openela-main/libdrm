@@ -22,20 +22,18 @@ end}
 %bcond_without amdgpu
 %bcond_without nouveau
 %bcond_without vmwgfx
-%ifarch %{arm}
-%bcond_without omap
-%else
+# Not (currently) used on non arm32
 %bcond_with    omap
-%endif
-%ifarch %{arm} aarch64
-%bcond_without exynos
+%bcond_with    exynos
+%ifarch aarch64
 %bcond_without freedreno
+%bcond_without freedreno_kgsl
 %bcond_without tegra
 %bcond_without vc4
 %bcond_without etnaviv
 %else
-%bcond_with    exynos
 %bcond_with    freedreno
+%bcond_with    freedreno_kgsl
 %bcond_with    tegra
 %bcond_with    vc4
 %bcond_with    etnaviv
@@ -47,14 +45,13 @@ end}
 %else
 %bcond_with    valgrind
 %endif
-%bcond_with    freedreno_kgsl
 %bcond_without install_test_programs
 %bcond_without udev
 
 Name:           libdrm
 Summary:        Direct Rendering Manager runtime library
-Version:        2.4.121
-Release:        1%{?dist}
+Version:        2.4.123
+Release:        2%{?dist}
 License:        MIT
 
 URL:            https://dri.freedesktop.org
@@ -151,24 +148,24 @@ cp %{SOURCE1} %{buildroot}%{_docdir}/libdrm
 %files
 %doc README.rst
 %{_libdir}/libdrm.so.2
-%{_libdir}/libdrm.so.2.4.0
+%{_libdir}/libdrm.so.2.123.0
 %dir %{_datadir}/libdrm
 %if %{with intel}
 %{_libdir}/libdrm_intel.so.1
-%{_libdir}/libdrm_intel.so.1.0.0
+%{_libdir}/libdrm_intel.so.1.123.0
 %endif
 %if %{with radeon}
 %{_libdir}/libdrm_radeon.so.1
-%{_libdir}/libdrm_radeon.so.1.0.1
+%{_libdir}/libdrm_radeon.so.1.123.0
 %endif
 %if %{with amdgpu}
 %{_libdir}/libdrm_amdgpu.so.1
-%{_libdir}/libdrm_amdgpu.so.1.0.0
+%{_libdir}/libdrm_amdgpu.so.1.123.0
 %{_datadir}/libdrm/amdgpu.ids
 %endif
 %if %{with nouveau}
 %{_libdir}/libdrm_nouveau.so.2
-%{_libdir}/libdrm_nouveau.so.2.0.0
+%{_libdir}/libdrm_nouveau.so.2.123.0
 %endif
 %if %{with omap}
 %{_libdir}/libdrm_omap.so.1
@@ -180,15 +177,15 @@ cp %{SOURCE1} %{buildroot}%{_docdir}/libdrm
 %endif
 %if %{with freedreno}
 %{_libdir}/libdrm_freedreno.so.1
-%{_libdir}/libdrm_freedreno.so.1.0.0
+%{_libdir}/libdrm_freedreno.so.1.123.0
 %endif
 %if %{with tegra}
 %{_libdir}/libdrm_tegra.so.0
-%{_libdir}/libdrm_tegra.so.0.0.0
+%{_libdir}/libdrm_tegra.so.0.123.0
 %endif
 %if %{with etnaviv}
 %{_libdir}/libdrm_etnaviv.so.1
-%{_libdir}/libdrm_etnaviv.so.1.0.0
+%{_libdir}/libdrm_etnaviv.so.1.123.0
 %endif
 %if %{with udev}
 %{_udevrulesdir}/91-drm-modeset.rules
@@ -209,7 +206,7 @@ cp %{SOURCE1} %{buildroot}%{_docdir}/libdrm
 %{_libdir}/pkgconfig/libdrm_intel.pc
 %endif
 %if %{with radeon}
-%{_includedir}/libdrm/radeon_*.h
+%{_includedir}/libdrm/radeon_{bo,cs,surface}*.h
 %{_includedir}/libdrm/r600_pci_ids.h
 %{_libdir}/libdrm_radeon.so
 %{_libdir}/pkgconfig/libdrm_radeon.pc
@@ -265,20 +262,35 @@ cp %{SOURCE1} %{buildroot}%{_docdir}/libdrm
 
 %if %{with install_test_programs}
 %files -n drm-utils
+%if %{with amdgpu}
 %{_bindir}/amdgpu_stress
+%endif
 %{_bindir}/drmdevice
+%if %{with etnaviv}
 %exclude %{_bindir}/etnaviv_*
+%endif
+%if %{with exynos}
 %exclude %{_bindir}/exynos_*
+%endif
+%if %{with tegra}
+%exclude %{_bindir}/tegra-*
+%endif
 %{_bindir}/modeprint
 %{_bindir}/modetest
 %{_bindir}/proptest
 %{_bindir}/vbltest
-%if %{with tegra}
-%{_bindir}/tegra-*
-%endif
 %endif
 
 %changelog
+* Wed Nov 13 2024 José Expósito <jexposit@redhat.com> - 2.4.123-2
+- Revert upstream commit ffaa3ce144be ("2.4.122, Build Intel on all arches")
+  libpciaccess is not available in RHEL 9 aarch64, ppc64le and s390x
+  Resolves: https://issues.redhat.com/browse/RHEL-53869
+
+* Tue Nov 12 2024 José Expósito <jexposit@redhat.com> - 2.4.123-1
+- Update to 2.4.123
+  Resolves: https://issues.redhat.com/browse/RHEL-53869
+
 * Wed Jun 05 2024 José Expósito <jexposit@redhat.com> - 2.4.121-1
 - Update to 2.4.121
 
